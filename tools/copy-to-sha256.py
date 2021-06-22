@@ -42,7 +42,7 @@ def main():
     if tar:
         handle_tar(logger, tar, to_path)
     else:
-        handle_dir(logger, path, to_path)
+        handle_dir(logger, from_path, to_path)
 
 def handle_dir(logger, from_path, to_path):
     def onerror(oserror):
