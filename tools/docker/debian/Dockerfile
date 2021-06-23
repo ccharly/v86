@@ -1,3 +1,20 @@
+FROM i386/debian AS build
+
+ENV DEBIAN_FRONTEND noninteractive
+
+RUN apt-get update \
+ && apt-get install -y \
+        cmake \
+        g++ \
+        gcc-arm-linux-gnueabihf \
+        git \
+        libc6-dev-armhf-cross \
+        libvncserver-dev \
+ && git clone --recursive https://github.com/LedgerHQ/speculos.git \
+ && cd speculos \
+ && cmake -Bbuild -H. \
+ && make -C build/
+
 FROM i386/debian
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -66,3 +83,23 @@ RUN apt-get --yes clean && \
     rm -r /usr/share/man/* && \
     rm -r /usr/share/locale/?? && \
     rm /var/log/*.log /var/log/lastlog /var/log/wtmp /var/log/apt/*.log /var/log/apt/*.xz
+
+RUN apt-get update \
+ && apt-get install -y \
+        libvncserver-dev \
+        python3 \
+        python3-construct \
+        python3-flask \
+        python3-flask-restful \
+        python3-jsonschema \
+        python3-mnemonic \
+        python3-pil \
+        python3-pip \
+        python3-pyelftools \
+        python3-pyqt5 \
+        qemu-user-static \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/
+
+WORKDIR /speculos
+COPY --from=build /speculos /speculos
